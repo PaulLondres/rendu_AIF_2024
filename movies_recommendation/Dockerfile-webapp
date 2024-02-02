@@ -1,0 +1,26 @@
+FROM python:3.8
+# Set the working directory in the container to /app
+WORKDIR /app
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+#télécharger et décompresser depuis Kaggle
+RUN pip install kaggle
+RUN mkdir -p ~/.kaggle/ && mv kaggle.json ~/.kaggle/ && chmod 600 ~/.kaggle/kaggle.json
+RUN kaggle datasets download "ghrzarea/movielens-20m-posters-for-machine-learning"
+RUN apt-get install unzip
+RUN unzip movielens-20m-posters-for-machine-learning.zip
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --default-timeout=100 --trusted-host pypi.python.org -r requirements_webapp.txt
+
+#download data from drive repo
+#RUN gdown --id 153ZdYRu6SaQv8O_gaEs56RtgZefwjJ2g -O Webapp_Files.zip
+RUN gdown 153ZdYRu6SaQv8O_gaEs56RtgZefwjJ2g -O Webapp_Files.zip
+RUN unzip Webapp_Files.zip 2>&1
+
+# Make port 7860 available to the world outside this container
+# Gradio by default runs on port 7860
+EXPOSE 7860
+# Run the Gradio app when the container launches
+CMD ["python", "webapp.py"]

@@ -1,0 +1,20 @@
+# Use an official Python runtime as the parent image
+FROM python:3.8
+# Set the working directory in the container to /app
+WORKDIR /app
+# Copy the current directory contents into the container at /app
+COPY . /app
+# Install any needed packages specified in requirements.txt
+RUN pip install --default-timeout=100 --trusted-host pypi.python.org -r requirements_api.txt
+
+#download the data from drive repo
+#RUN gdown --id 1sQhrlb1KCBLCTyT50tAI8xdy6WEpX3MP -O API_Files.zip
+RUN gdown 1sQhrlb1KCBLCTyT50tAI8xdy6WEpX3MP -O API_Files.zip
+RUN unzip API_Files.zip 2>&1
+
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
+# Define environment variable for Flask to run in production mode
+ENV FLASK_ENV=production
+# Run ann_api.py when the container launches
+CMD ["python", "api_recom_image.py"]
